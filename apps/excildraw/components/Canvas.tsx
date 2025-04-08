@@ -47,8 +47,8 @@ return(
     <IconButton activated={selectedTool === Tools.PEN} icon={<Pen />} onClick={() => { setSelectedTool(Tools.PEN) }} />
     <IconButton activated={selectedTool === Tools.CIRCLE} icon={<Circle />} onClick={() => setSelectedTool(Tools.CIRCLE)} />
     <IconButton activated={selectedTool === Tools.SQUARE} icon={<Square />} onClick={() => { setSelectedTool(Tools.SQUARE) }} />
-    <IconButton activated={selectedTool === Tools.Line} icon={<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    <IconButton activated={selectedTool === Tools.Line} icon={<svg width="100" height="10" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="5" x2="100" y2="5" stroke="black" strokeWidth="2" />
     </svg>} onClick={() => { setSelectedTool(Tools.Line) }} />
 
   </div>
