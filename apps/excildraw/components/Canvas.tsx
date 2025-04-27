@@ -1,7 +1,7 @@
-import { initDraw } from "@/draw";
+// import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import IconButton from "./IconButton";
-import {ArrowBigLeft, Circle,Pen,Square} from 'lucide-react'
+import {Circle,Pen,Square} from 'lucide-react'
 import { Game } from "@/draw/Game";
 
 export enum Tools {
@@ -24,7 +24,7 @@ const Canvas = ({roomId,socket}:{roomId:string,socket:WebSocket}) => {
               g.destroye()
             }
         }
-    }, [canvasRef])
+    }, [canvasRef,roomId,socket])
 
     useEffect(() => {
       console.log(selectedTool)
