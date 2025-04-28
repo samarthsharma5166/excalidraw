@@ -1,6 +1,5 @@
 'use client'
-import {Input} from '@repo/ui/Input'
-import {Button} from '@repo/ui/ Button'
+import {Button} from '@repo/ui/Button'
 import { buttonStyles, inputStyle } from '@/lib/constants/style';
 import { useState } from 'react';
 import axios from 'axios';
@@ -64,7 +63,20 @@ const AuthPage = ({ isSignedIn }: { isSignedIn :boolean}) => {
           </div>
           <div className='flex w-full px-1 text-left justify-start items-start'>
             <p className='text-gray-600 text-sm'>{isSignedIn ? "Don't have an account ?" : "Already have an account ?"}</p>
-            <button onClick={() => { isSignedIn ? (router.push('/signup')) : (router.push('/signin'))}} className="text-blue-500 cursor-pointer text-sm ml-1" >{isSignedIn ? " Sign Up" : " Login"}</button>
+            {/* <button onClick={() => { isSignedIn ? (router.push('/signup')) : (router.push('/signin'))}} className="text-blue-500 cursor-pointer text-sm ml-1" >{isSignedIn ? " Sign Up" : " Login"}</button> */}
+            <button
+              onClick={() => {
+                if (isSignedIn) {
+                  router.push('/signup');
+                } else {
+                  router.push('/signin');
+                }
+              }}
+              className="text-blue-500 cursor-pointer text-sm ml-1"
+            >
+              {isSignedIn ? " Sign Up" : " Login"}
+            </button>
+
           </div>
           {isSignedIn ? <Button name='Login' style={buttonStyles.filled} onclick={handleSubmit} /> : <Button name='Sign Up' style={buttonStyles.gradient} onclick={handleSubmit} />}
         </div>
