@@ -1,0 +1,19 @@
+name: Deploy to Staging
+on:
+  push:
+    branches:
+      - main
+jobs:
+  redeploy_everything:
+    name: Deploying everything to the staging
+    steps:
+      - name: SSH Into server
+      - run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          ssh -i ~/ssh_key ubuntu@51.20.80.128
+          cd excalidraw/ && git pull
+          pnpm install
+          pnpm run build
+          pm2 restart fe
+          pm2 restart http-server 
+          pm2 restart ws-server 
