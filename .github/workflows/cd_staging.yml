@@ -8,19 +8,16 @@ jobs:
     name: Deploying everything to the staging
     steps:
       - run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/ssh_key
-          chmod 600 ~/ssh_key
-
-          echo "${{ secrets.KNOWN_HOST }}" | tr -d '\r' > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@51.20.80.128 << 'EOF'
-            cd excalidraw/
-            git pull
-            pnpm install
-            pnpm run build
-            pm2 restart fe
-            pm2 restart http-server
-            pm2 restart ws-server
-          EOF
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          mkdir -p /home/runner/.ssh
+          ls /home/runner/.ssh
+          touch /home/runner/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOST }}" &> /home/runner/.ssh/known_hosts
+          chmod 700 /home/runner/ssh_key
+          ssh -i ~/ssh_key ubuntu@51.20.80.128
+          cd excalidraw/ && git pull
+          pnpm install
+          pnpm run build
+          pm2 restart fe
+          pm2 restart http-server 
+          pm2 restart ws-server 
