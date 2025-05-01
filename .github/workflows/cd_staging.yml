@@ -7,8 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploying everything to the staging
     steps:
-      name: SSH Into server
-      run: |
+      -run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
           ssh -i ~/ssh_key ubuntu@51.20.80.128
           cd excalidraw/ && git pull
