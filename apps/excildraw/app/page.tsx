@@ -62,7 +62,7 @@ export default function page() {
           ))}
         </div>
       </section>
-
+          <h1 className='text-2xl font-bold text-[#FFD700]  mt-6   '>samarth sharam</h1>
       <footer className="w-full max-w-6xl text-center py-6 border-t border-gray-700 mt-16">
         <p className="text-gray-500">&copy; 2025 BlipX. All rights reserved.</p>
       </footer>
