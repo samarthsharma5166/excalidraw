@@ -9,7 +9,7 @@ jobs:
     steps:
       - run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOST }}" &> ~/.ssh/known_hosts
           ssh -i ~/ssh_key ubuntu@51.20.80.128
           cd excalidraw/ && git pull
           pnpm install
