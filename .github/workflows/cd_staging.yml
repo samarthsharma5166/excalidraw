@@ -14,7 +14,7 @@ jobs:
           touch /home/runner/.ssh/known_hosts
           echo "${{ secrets.KNOWN_HOST }}" &> /home/runner/.ssh/known_hosts
           chmod 700 /home/runner/ssh_key
-          ssh -i ~/ssh_key ubuntu@51.20.80.128 -t "cd excalidraw/ && git pull && pnpm install &&  pnpm run build && pm2 restart fe && pm2 restart http-server && pm2 restart ws-server"
+          ssh -i ~/ssh_key ubuntu@51.20.80.128 -t "cd excalidraw/ && git pull origin main && source ~/.bashrc && npm install -g pnpm && pnpm install &&  pnpm run build && pm2 restart fe && pm2 restart http-server && pm2 restart ws-server"
          
           
           
