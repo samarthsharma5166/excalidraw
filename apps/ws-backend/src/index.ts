@@ -118,6 +118,44 @@ wss.on("connection", (ws, request) => {
           }
         });
       }
+
+       if (parsedData.type === "updateChat") {
+         const roomId = parsedData.roomId;
+         const mess = parsedData.message;
+
+         if (!roomId || !mess) {
+           console.error("Missing roomId or message in chat event");
+           return;
+         }
+         const pardata = JSON.parse(mess);
+         const id = Number(pardata.id);
+         console.log("parsed data",pardata);
+         console.log("before update", pardata);
+         const res = await prisma.chat.update({
+           where: {
+             id: pardata.id,
+           },
+           data: {
+             message: JSON.stringify(pardata.shape),
+           },
+         });
+         console.log("after update", res);
+
+         users.forEach((u) => {
+           if (u.rooms.includes(roomId)) {
+             u.ws.send(
+               JSON.stringify({
+                 type: "updatedChat",
+                 message: JSON.stringify(res),
+                 roomId,
+               })
+             );
+           }
+         });
+
+
+         console.log("updated chat", res);
+       }
     } catch (e) {
       console.error("Error processing message:", e);
     }

@@ -9,9 +9,10 @@ export async function getExistingShape(roomId: string) {
     },
   });
   const data = res.data.messages;
-  const shapes = await data.map((x: { success: boolean; message: string }) => {
+  console.log("helooooooooo----",data)
+  const shapes = await data.map((x: { success: boolean; message: string,id:number }) => {
     const messageData = JSON.parse(x.message);
-    return messageData;
+    return {...messageData, id:x?.id};
   });
   return shapes;
 }

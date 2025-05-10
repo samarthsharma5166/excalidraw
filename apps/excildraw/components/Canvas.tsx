@@ -1,14 +1,16 @@
 // import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import IconButton from "./IconButton";
-import {Circle,Pen,Square} from 'lucide-react'
+import {Circle,MousePointer,Pen,Square} from 'lucide-react'
 import { Game } from "@/draw/Game";
 
 export enum Tools {
     PEN = "pen",
     CIRCLE = "circle",
     SQUARE = "ract",
-    Line = "line"
+    Line = "line",
+    SELECTION = "selection",
+    TEXT = "text"
 }
 const Canvas = ({roomId,socket}:{roomId:string,socket:WebSocket}) => {
     const [selectedTool,setSelectedTool] = useState<Tools>(Tools.PEN);
@@ -27,7 +29,6 @@ const Canvas = ({roomId,socket}:{roomId:string,socket:WebSocket}) => {
     }, [canvasRef,roomId,socket])
 
     useEffect(() => {
-      console.log(selectedTool)
       game?.setTool(selectedTool)
     },[selectedTool,game])
   return (
@@ -44,13 +45,14 @@ export default Canvas
 export function TopBar({selectedTool,setSelectedTool}:{selectedTool:Tools,setSelectedTool:React.Dispatch<React.SetStateAction<Tools>>}){
 return(
   <div className="flex gap-2 border p-2 text-sm fixed top-2 rounded-md left-[50%] transform -translate-x-1/2  text-white" >
+    <IconButton activated={selectedTool === Tools.SELECTION} icon={<MousePointer/>} onClick={() => { setSelectedTool(Tools.SELECTION) }} />
     <IconButton activated={selectedTool === Tools.PEN} icon={<Pen />} onClick={() => { setSelectedTool(Tools.PEN) }} />
     <IconButton activated={selectedTool === Tools.CIRCLE} icon={<Circle />} onClick={() => setSelectedTool(Tools.CIRCLE)} />
     <IconButton activated={selectedTool === Tools.SQUARE} icon={<Square />} onClick={() => { setSelectedTool(Tools.SQUARE) }} />
-    <IconButton activated={selectedTool === Tools.Line} icon={<svg width="100" height="10" xmlns="http://www.w3.org/2000/svg">
-      <line x1="0" y1="5" x2="100" y2="5" stroke="black" strokeWidth="2" />
+    <IconButton activated={selectedTool === Tools.Line} icon={<svg width="30" height="10" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="10" x2="30" y2="10" stroke="white" strokeWidth="3" />
     </svg>} onClick={() => { setSelectedTool(Tools.Line) }} />
-
+    <IconButton activated={selectedTool === Tools.TEXT} icon={<p className="text-xl">A</p>} onClick={() => { setSelectedTool(Tools.TEXT) }} />
   </div>
 )
 }
