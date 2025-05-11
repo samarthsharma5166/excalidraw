@@ -111,7 +111,7 @@ wss.on("connection", (ws, request) => {
             u.ws.send(
               JSON.stringify({
                 type: "chat",
-                message: mess,
+                message: res,
                 roomId,
               })
             );
@@ -129,6 +129,7 @@ wss.on("connection", (ws, request) => {
          }
          const pardata = JSON.parse(mess);
          const id = Number(pardata.id);
+         console.log(id);
          console.log("parsed data",pardata);
          console.log("before update", pardata);
          const res = await prisma.chat.update({

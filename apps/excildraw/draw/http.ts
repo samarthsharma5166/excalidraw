@@ -12,7 +12,7 @@ export async function getExistingShape(roomId: string) {
   console.log("helooooooooo----",data)
   const shapes = await data.map((x: { success: boolean; message: string,id:number }) => {
     const messageData = JSON.parse(x.message);
-    return {...messageData, id:x?.id};
+    return {...messageData, id:x.id};
   });
   return shapes;
 }

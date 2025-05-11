@@ -88,8 +88,10 @@ export class Game {
     this.socket.onmessage = (e) => {
       const mess = JSON.parse(e.data);
       if (mess.type === "chat") {
-        const parsedData = JSON.parse(mess.message);
-        this.existingShape.push(parsedData);
+        console.log(mess);
+        const parsedData = JSON.parse(mess.message.message);
+        this.existingShape.push({id:mess.message.id,...parsedData});
+        console.log(this.existingShape)
         this.clearCanvas();
       }
       if (mess.type === "updatedChat") {
@@ -360,9 +362,10 @@ export class Game {
     this.height = e.clientY - this.StartY;
     if (this.moving) {
       (e.target as HTMLElement).style.cursor = "move";
+      // if(!this.movingShape?.id) return;
       if (this.movingShape?.type === "ract") {
         this.existingShape = this.existingShape.filter(
-          (shape) => shape !== this.movingShape
+          (shape) => shape.id !== this.movingShape?.id
         );
         this.clearCanvas();
         const deltaX = e.clientX - this.StartX;
@@ -534,13 +537,13 @@ export class Game {
     }
     this.clicked = false;
     if (this.selectedTool === Tools.SQUARE) {
-      this.existingShape.push({
-        type: "ract",
-        x: this.StartX,
-        y: this.StartY,
-        width: this.width,
-        height: this.height,
-      });
+      // this.existingShape.push({
+      //   type: "ract",
+      //   x: this.StartX,
+      //   y: this.StartY,
+      //   width: this.width,
+      //   height: this.height,
+      // });
       this.figure = {
         type: "ract",
         x: this.StartX,
@@ -549,12 +552,12 @@ export class Game {
         height: this.height,
       };
     } else if (this.selectedTool === Tools.CIRCLE) {
-      this.existingShape.push({
-        type: "circle",
-        centerX: this.centerX,
-        centerY: this.centerY,
-        radius: Math.abs(this.radius),
-      });
+      // this.existingShape.push({
+      //   type: "circle",
+      //   centerX: this.centerX,
+      //   centerY: this.centerY,
+      //   radius: Math.abs(this.radius),
+      // });
       this.figure = {
         type: "circle",
         centerX: this.centerX,
@@ -566,7 +569,7 @@ export class Game {
         type: "pen",
         inputpoint: this.inputpoint,
       };
-      this.existingShape.push(this.figure);
+      // this.existingShape.push(this.figure);
     } else if (this.selectedTool === Tools.Line) {
       this.figure = {
         type: "line",
@@ -575,7 +578,7 @@ export class Game {
         x2: e.clientX,
         y2: e.clientY,
       };
-      this.existingShape.push(this.figure);
+      // this.existingShape.push(this.figure);
     } else {
       return;
     }
