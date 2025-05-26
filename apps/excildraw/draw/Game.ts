@@ -2,6 +2,7 @@ import { Tools } from "@/components/Canvas";
 import { getExistingShape } from "./http";
 import  rough from 'roughjs'
 import { RoughCanvas } from "roughjs/bin/canvas";
+import { Eraser } from "lucide-react";
 interface Point {
   x: number;
   y: number;
@@ -88,10 +89,8 @@ export class Game {
     this.socket.onmessage = (e) => {
       const mess = JSON.parse(e.data);
       if (mess.type === "chat") {
-        console.log(mess);
         const parsedData = JSON.parse(mess.message.message);
         this.existingShape.push({id:mess.message.id,...parsedData});
-        console.log(this.existingShape)
         this.clearCanvas();
       }
       if (mess.type === "updatedChat") {
@@ -123,6 +122,10 @@ export class Game {
           }
           return shape;
         });
+        this.clearCanvas();
+      }
+      if(mess.type === "deleteChat"){
+        this.existingShape = this.existingShape.filter((shape) => shape.id !== mess.id);
         this.clearCanvas();
       }
     };
@@ -342,6 +345,22 @@ export class Game {
   mouseDownHandler = (e: MouseEvent) => {
     this.StartX = e.clientX;
     this.StartY = e.clientY;
+    if(this.selectedTool === Tools.ERASER){
+      const ele = this.getElementAtPosition();
+      if (ele) {
+        this.existingShape = this.existingShape.filter(
+          (shape) => shape.id !== ele.id
+        );
+        this.socket.send(
+          JSON.stringify({
+            type: "delete",
+            id: ele.id,
+            roomId:this.roomId
+          })
+        )
+        this.clearCanvas();
+      }
+    }
     if (this.selectedTool === Tools.SELECTION) {
       const ele = this.getElementAtPosition();
       if (ele) {
@@ -360,6 +379,9 @@ export class Game {
   mouseMoveHandler = (e: MouseEvent) => {
     this.width = e.clientX - this.StartX;
     this.height = e.clientY - this.StartY;
+    // if(this.selectedTool === Tools.ERASER){
+    //   this.canvas.style.cursor = "url('/eraser.png'), 50, 50";
+    // }
     if (this.moving) {
       (e.target as HTMLElement).style.cursor = "move";
       // if(!this.movingShape?.id) return;
@@ -457,7 +479,6 @@ export class Game {
   mouseUpHandler = (e: MouseEvent) => {
     if (this.moving && this.movingShape !== null) {
       (e.target as HTMLElement).style.cursor = "default";
-
       if (this.movingShape.type === "ract") {
         this.socket.send(
           JSON.stringify({
@@ -537,13 +558,6 @@ export class Game {
     }
     this.clicked = false;
     if (this.selectedTool === Tools.SQUARE) {
-      // this.existingShape.push({
-      //   type: "ract",
-      //   x: this.StartX,
-      //   y: this.StartY,
-      //   width: this.width,
-      //   height: this.height,
-      // });
       this.figure = {
         type: "ract",
         x: this.StartX,

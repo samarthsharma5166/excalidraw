@@ -1,4 +1,6 @@
 "use client"
+import Image from "next/image";
+import "./globals.css";
 import { motion } from 'framer-motion';
 export default function page() {
   return (

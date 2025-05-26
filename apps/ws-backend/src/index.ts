@@ -118,11 +118,31 @@ wss.on("connection", (ws, request) => {
           }
         });
       }
+      if (parsedData.type === "delete") {
+         const roomId = parsedData.roomId;
+         console.log(roomId)
+          await prisma.chat.delete({
+            where: {
+                id: Number(parsedData.id),
+              },
+            });
+          
+          users.forEach((u) => {
+            if (u.rooms.includes(roomId)) {
+              u.ws.send(
+                JSON.stringify({
+                  type: "deleteChat",
+                  id: parsedData.id,
+                  roomId,
+                })
+              );
+            }
+          })
+      }
 
        if (parsedData.type === "updateChat") {
          const roomId = parsedData.roomId;
          const mess = parsedData.message;
-
          if (!roomId || !mess) {
            console.error("Missing roomId or message in chat event");
            return;
@@ -130,8 +150,6 @@ wss.on("connection", (ws, request) => {
          const pardata = JSON.parse(mess);
          const id = Number(pardata.id);
          console.log(id);
-         console.log("parsed data",pardata);
-         console.log("before update", pardata);
          const res = await prisma.chat.update({
            where: {
              id: pardata.id,
@@ -153,9 +171,6 @@ wss.on("connection", (ws, request) => {
              );
            }
          });
-
-
-         console.log("updated chat", res);
        }
     } catch (e) {
       console.error("Error processing message:", e);
