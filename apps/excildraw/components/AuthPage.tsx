@@ -19,11 +19,16 @@ const AuthPage = ({ isSignedIn }: { isSignedIn :boolean}) => {
       //Login
       try {
         const res = await axios.post(HTTP_BACKEND_URL + '/signin', userData);
-        console.log("login res ",res)
+        console.log(res.data);
+        console.log("login res",res)
         if (res.data.message === "success") {
           const token = res.data.token;
+          if (!token) {
+            return;
+          } 
           console.log(token);
           localStorage.setItem('token', token);
+          router.push("/canvas/1");
           // router.push('/canvas/');
         }
       } catch (error) {
@@ -47,7 +52,7 @@ const AuthPage = ({ isSignedIn }: { isSignedIn :boolean}) => {
 
   return (
     <div className=" w-screen h-screen flex justify-center items-center bg-[#4b6584]">
-      <div >
+      <div className='w-full max-w-sm md:max-w-md lg:max-w-lg px-4 mx-auto'>
         <div className="flex flex-col justify-center items-center gap-4 bg-white shadow-2xl p-8 rounded-md">
             <h1 className="text-2xl font-semibold text-slate-800"> {isSignedIn ? 'Login' : 'Sign Up'} </h1>
         <div className="w-full max-w-sm min-w-[200px]">

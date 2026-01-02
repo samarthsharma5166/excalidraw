@@ -1,1 +1,6 @@
 @import "tailwindcss";
+.input{
+    background-color:"#fff",
+    color:"white",
+    font-size:"19px"
+}

@@ -1,8 +1,8 @@
 import { Tools } from "@/components/Canvas";
 import { getExistingShape } from "./http";
-import  rough from 'roughjs'
-import { RoughCanvas } from "roughjs/bin/canvas";
-import { Eraser } from "lucide-react";
+// import  rough from 'roughjs'
+// import { RoughCanvas } from "roughjs/bin/canvas";
+// import { Eraser } from "lucide-react";
 interface Point {
   x: number;
   y: number;
@@ -55,6 +55,8 @@ export class Game {
   private inputpoint: number[][] = [];
   private moving: boolean = false;
   private movingShape: shape | null = null;
+  private text = "";
+  private input: HTMLInputElement | null = null;
 
   constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
     this.canvas = canvas;
@@ -90,7 +92,7 @@ export class Game {
       const mess = JSON.parse(e.data);
       if (mess.type === "chat") {
         const parsedData = JSON.parse(mess.message.message);
-        this.existingShape.push({id:mess.message.id,...parsedData});
+        this.existingShape.push({ id: mess.message.id, ...parsedData });
         this.clearCanvas();
       }
       if (mess.type === "updatedChat") {
@@ -124,8 +126,10 @@ export class Game {
         });
         this.clearCanvas();
       }
-      if(mess.type === "deleteChat"){
-        this.existingShape = this.existingShape.filter((shape) => shape.id !== mess.id);
+      if (mess.type === "deleteChat") {
+        this.existingShape = this.existingShape.filter(
+          (shape) => shape.id !== mess.id
+        );
         this.clearCanvas();
       }
     };
@@ -142,9 +146,9 @@ export class Game {
       if (this.movingShape.type === "ract") {
         // this.ctx.strokeStyle = "Blue";
         this.ctx.strokeRect(
-          this.movingShape.x -padding,
+          this.movingShape.x - padding,
           this.movingShape.y - padding,
-          this.movingShape.width + padding * 2 ,
+          this.movingShape.width + padding * 2,
           this.movingShape.height + padding * 2
         );
         this.ctx.strokeStyle = "white";
@@ -156,12 +160,16 @@ export class Game {
         );
       }
       if (this.movingShape.type === "circle") {
-        this.ctx.strokeRect(  
-          this.movingShape.centerX - Math.abs(Number(this.movingShape.radius))  - padding,
-          this.movingShape.centerY - Math.abs(Number(this.movingShape.radius)) - padding,
-          Math.abs(Number(this.movingShape.radius)) * 2 + padding ,
-          Math.abs(Number(this.movingShape.radius)) * 2 + padding 
-        )
+        this.ctx.strokeRect(
+          this.movingShape.centerX -
+            Math.abs(Number(this.movingShape.radius)) -
+            padding,
+          this.movingShape.centerY -
+            Math.abs(Number(this.movingShape.radius)) -
+            padding,
+          Math.abs(Number(this.movingShape.radius)) * 2 + padding,
+          Math.abs(Number(this.movingShape.radius)) * 2 + padding
+        );
         this.ctx.strokeStyle = "white";
         this.ctx.beginPath();
         this.ctx.arc(
@@ -186,19 +194,19 @@ export class Game {
           minY = Infinity,
           maxX = -Infinity,
           maxY = -Infinity;
-          this.movingShape.inputpoint.forEach((point) => {
-            minX = Math.min(minX, point[0]);
-            minY = Math.min(minY, point[1]);
-            maxX = Math.max(maxX, point[0]);
-            maxY = Math.max(maxY, point[1]);
-          });
+        this.movingShape.inputpoint.forEach((point) => {
+          minX = Math.min(minX, point[0]);
+          minY = Math.min(minY, point[1]);
+          maxX = Math.max(maxX, point[0]);
+          maxY = Math.max(maxY, point[1]);
+        });
 
-          this.ctx.strokeRect(
-            minX - padding,
-            minY - padding,
-            maxX  - minX,
-            maxY - minY
-          )
+        this.ctx.strokeRect(
+          minX - padding,
+          minY - padding,
+          maxX - minX,
+          maxY - minY
+        );
         this.freeDraw(this.movingShape.inputpoint);
       }
     }
@@ -345,7 +353,8 @@ export class Game {
   mouseDownHandler = (e: MouseEvent) => {
     this.StartX = e.clientX;
     this.StartY = e.clientY;
-    if(this.selectedTool === Tools.ERASER){
+
+    if (this.selectedTool === Tools.ERASER) {
       const ele = this.getElementAtPosition();
       if (ele) {
         this.existingShape = this.existingShape.filter(
@@ -355,9 +364,9 @@ export class Game {
           JSON.stringify({
             type: "delete",
             id: ele.id,
-            roomId:this.roomId
+            roomId: this.roomId,
           })
-        )
+        );
         this.clearCanvas();
       }
     }
@@ -606,13 +615,156 @@ export class Game {
     this.clearCanvas();
   };
 
+  // doubleClickHandler = (e: MouseEvent) => {
+  //   this.input = document.createElement("input");
+  //   this.input.type = "text";
+  //   this.input.className = "input";
+  //   this.StartX = e.clientX;
+  //   this.StartY = e.clientY;
+  //   this.input.style.position = "absolute";
+  //   this.input.style.left = `${this.StartX}px`;
+  //   this.input.style.top = `${this.StartY}px`;
+
+  //   document.body.appendChild(this.input);
+  //   this.input.focus();
+  //   this.input.addEventListener("change", (e) => {
+  //     this.text += (e.target as HTMLInputElement).value;
+  //     // document.body.removeChild(this.input!);
+  //   });
+  //   this.input.addEventListener("blur", () => {
+  //     document.body.removeChild(this.input!);
+  //   });
+  // };
+  // doubleClickHandler = (e: MouseEvent) => {
+  //   // Remove existing input if any
+  //   if (this.input && document.body.contains(this.input)) {
+  //     document.body.removeChild(this.input);
+  //     this.input = null;
+  //   }
+
+  //   this.input = document.createElement("input");
+  //   this.input.type = "text";
+  //   this.input.className = "input";
+  //   this.StartX = e.clientX;
+  //   this.StartY = e.clientY;
+
+  //   // Position the input
+  //   this.input.style.position = "absolute";
+  //   this.input.style.left = `${this.StartX}px`;
+  //   this.input.style.top = `${this.StartY}px`;
+  //   this.input.style.zIndex = "1000";
+
+  //   // Add to DOM and focus
+  //   document.body.appendChild(this.input);
+  //   this.input.focus();
+
+  //   // Flag to prevent double removal
+  //   let removed = false;
+
+  //   const removeInput = () => {
+  //     if (removed || !this.input) return;
+  //     if (document.body.contains(this.input)) {
+  //       document.body.removeChild(this.input);
+  //     }
+  //     this.input = null;
+  //     removed = true;
+  //   };
+
+  //   const handleSubmit = () => {
+  //     if (!this.input) return;
+
+  //     const text = this.input.value;
+  //     if (text) {
+  //       this.ctx.fillStyle = "white";
+  //       this.ctx.font = "16px Arial";
+  //       this.ctx.fillText(text, this.StartX, this.StartY);
+  //     }
+
+  //     removeInput();
+  //   };
+
+  //   // Clean up previous event listeners if any
+  //   this.input.onkeydown = null;
+  //   this.input.onblur = null;
+
+  //   this.input.addEventListener("keydown", (e) => {
+  //     if (e.key === "Enter") {
+  //       handleSubmit();
+  //     }
+  //   });
+
+  //   this.input.addEventListener("blur", () => {
+  //     handleSubmit();
+  //   });
+  // };
+
   doubleClickHandler = (e: MouseEvent) => {
-    
-  }
+    // Remove existing input if any
+    if (this.input && document.body.contains(this.input)) {
+      document.body.removeChild(this.input);
+      this.input = null;
+    }
+
+    this.input = document.createElement("input");
+    this.input.type = "text";
+    this.input.className = "input";
+    this.StartX = e.clientX;
+    this.StartY = e.clientY;
+
+    // Position the input
+    this.input.style.position = "absolute";
+    this.input.style.left = `${this.StartX}px`;
+    this.input.style.top = `${this.StartY}px`;
+    this.input.style.zIndex = "1000";
+
+    // Add to DOM and focus
+    document.body.appendChild(this.input);
+    this.input.focus();
+
+    // Flag to prevent double removal
+    let removed = false;
+
+    const removeInput = () => {
+      if (removed || !this.input) return;
+      if (document.body.contains(this.input)) {
+        document.body.removeChild(this.input);
+      }
+      this.input = null;
+      removed = true;
+    };
+
+    const handleSubmit = () => {
+      if (!this.input) return;
+
+      const text = this.input.value;
+      if (text) {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "16px Arial";
+        this.ctx.fillText(text, this.StartX, this.StartY);
+      }
+
+      removeInput();
+    };
+
+    // Clean up previous event listeners if any
+    this.input.onkeydown = null;
+    this.input.onblur = null;
+
+    this.input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleSubmit();
+      }
+    });
+
+    this.input.addEventListener("blur", () => {
+      handleSubmit();
+    });
+  };
   initMouseHandlers() {
     this.canvas.addEventListener("mousedown", this.mouseDownHandler);
     this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
     this.canvas.addEventListener("mouseup", this.mouseUpHandler);
     this.canvas.addEventListener("dblclick", this.doubleClickHandler);
+    // this.canvas.addEventListener("keypress", this.keyPressHandler);
   }
 }

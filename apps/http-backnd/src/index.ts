@@ -1,4 +1,4 @@
-import express from 'express'
+*import express from 'express'
 import { createRoomSchema, createUser, signInSchema } from "@repo/common/types";
 import {prisma} from '@repo/db/prisma'
 import bcrypt from 'bcrypt'
@@ -35,9 +35,9 @@ app.post('/signup', async(req, res) => {
               message: "incorrect inputs",
             });
             return;
-          }  
+          }  **********************************************************************************
 
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await *.user.findUnique({
         where: {
           email,
         },
